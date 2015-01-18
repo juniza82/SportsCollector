@@ -10,34 +10,53 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class BetmanRepositoryImpl implements BetmanRepository {
 
+	private static Logger logger = LoggerFactory.getLogger(BetmanRepositoryImpl.class);
+	
 	@Override
 	public RecentMatchHistory getRecentMatchHistory(String url) throws ClientProtocolException, IOException {
 		
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
-
-            public String handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
-            	
-                int status = response.getStatusLine().getStatusCode();
-                if (status >= 200 && status < 300) {
-                    HttpEntity entity = response.getEntity();
-                    return entity != null ? EntityUtils.toString(entity) : null;
-                } else {
-                    throw new ClientProtocolException("Unexpected response status: " + status);
-                }
-            }
-
-        };
-        
-        String responseBody = httpclient.execute(new HttpGet(url), responseHandler);
-        System.out.println("----------------------------------------");
-        System.out.println(responseBody);        
-		return null;
+		logger.info(String.format("SCHEDULE::START-GET_RECENT_MATCH_HISTORY::TARGET -> %s", url));
+		
+		try {
+		
+			CloseableHttpClient httpclient = HttpClients.createDefault();
+			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+	
+	            public String handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+	            	
+	                int status = response.getStatusLine().getStatusCode();
+	                if (status >= 200 && status < 300) {
+	                    HttpEntity entity = response.getEntity();
+	                    return entity != null ? EntityUtils.toString(entity) : null;
+	                } else {
+	                    throw new ClientProtocolException("Unexpected response status: " + status);
+	                }
+	            }
+	
+	        };
+	        
+	        String responseBody = httpclient.execute(new HttpGet(url), responseHandler);
+	        Document doc = Jsoup.parse(responseBody);
+	        Element recentMatchHistoryElement = doc.getElementsByClass("dataH02").first().getElementsByTag("tbody").first();
+	        /*String firstTimeName = recentMatchHistoryElements
+	        .getElementsByTag("tr").first().getElementsByTag("td").get(1).getElementsByTag("a").text();
+	        */
+	        return null;
+		
+		} finally {
+			logger.info(String.format("SCHEDULE::END-GET_RECENT_MATCH_HISTORY::TARGET -> %s", url));
+		}
 	}
 	
 }
