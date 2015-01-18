@@ -1,5 +1,6 @@
 package com.namja.collector;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
@@ -8,13 +9,18 @@ import java.lang.management.ThreadMXBean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
 @EnableScheduling
 public class SportsMetaDataCollectorServiceImpl implements SportsMetaDataCollectorService {
 	
 	private static Logger logger = LoggerFactory.getLogger(SportsMetaDataCollectorServiceImpl.class);
+
+	@Autowired BetmanRepositoryImpl betmanRepository;
 	
     @Scheduled(fixedRate = 5000)
     @Override
@@ -36,7 +42,20 @@ public class SportsMetaDataCollectorServiceImpl implements SportsMetaDataCollect
          MemoryUsage nonHeap = memBean.getNonHeapMemoryUsage();
          logger.info(String.format("[DEAMON-MONITOR] Heap    : Init: %d, Used: %d, Committed: %d, Max.: %d", heap.getInit(), heap.getUsed(), heap.getCommitted(), heap.getMax()));
          logger.info(String.format("[DEAMON-MONITOR] Non-Heap: Init: %d, Used: %d, Committed: %d, Max.: %d", nonHeap.getInit(), nonHeap.getUsed(), nonHeap.getCommitted(), nonHeap.getMax()));
-         logger.info(String.format("[DEAMON-MONITOR] ##########################################################################################")); 
+         logger.info(String.format("[DEAMON-MONITOR] ##########################################################################################"));
+         
+    }
+    
+    @Scheduled(fixedRate = 5000)
+    @Override
+    public void recentMatchHistory() {
+    	
+    	try {
+			betmanRepository.getRecentMatchHistory("http://www.betman.co.kr/sportsMatchRecord.so?method=inquireMatchRecord&item=BK&league=BK001&id=1&seq=&teamId1=35&teamId2=10&isToto=&viewType=recent");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
     }
 
 }
