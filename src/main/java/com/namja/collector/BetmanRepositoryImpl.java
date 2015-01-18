@@ -49,9 +49,10 @@ public class BetmanRepositoryImpl implements BetmanRepository {
 	        String responseBody = httpclient.execute(new HttpGet(url), responseHandler);
 	        Document doc = Jsoup.parse(responseBody);
 	        Element recentMatchHistoryElement = doc.getElementsByClass("dataH02").first().getElementsByTag("tbody").first();
-	        /*String firstTimeName = recentMatchHistoryElements
-	        .getElementsByTag("tr").first().getElementsByTag("td").get(1).getElementsByTag("a").text();
-	        */
+	        
+	        // 2사이즈 배열 [ 0 : 팀명 / 1 : 순위 ]
+	        String[] firstTeamNameRankInfo = recentMatchHistoryElement.getElementsByTag("tr").first().getElementsByTag("td").get(2).text().split(" ");
+	        
 	        return null;
 		
 		} finally {
