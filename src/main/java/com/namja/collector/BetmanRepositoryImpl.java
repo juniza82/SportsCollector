@@ -59,5 +59,12 @@ public class BetmanRepositoryImpl implements BetmanRepository {
 			logger.info(String.format("SCHEDULE::END-GET_RECENT_MATCH_HISTORY::TARGET -> %s", url));
 		}
 	}
+
+	@Override
+	public RecentMatchHistory getRecentMatchHistory2(String url)
+			throws ClientProtocolException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

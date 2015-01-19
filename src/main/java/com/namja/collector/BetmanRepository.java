@@ -14,4 +14,6 @@ public interface BetmanRepository {
 	 */
 	public RecentMatchHistory getRecentMatchHistory(String url) throws ClientProtocolException, IOException;
 	
+	public RecentMatchHistory getRecentMatchHistory2(String url) throws ClientProtocolException, IOException;
+	
 }
