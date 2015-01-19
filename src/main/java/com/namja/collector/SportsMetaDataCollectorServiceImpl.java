@@ -68,7 +68,7 @@ public class SportsMetaDataCollectorServiceImpl implements SportsMetaDataCollect
     	try {
     		logger.info(String.format("[JUNIZA-MONITOR] ##########################################################################################"));
     		logger.info(String.format("[JUNIZA-MONITOR] 수집 스케줄러 시작"));
-			betmanRepository.getRecentMatchProtoHistory("http://www.betman.co.kr/gameInfoMain.so?gameId=G101&gameRound=150005");
+			betmanRepository.getRecentMatchProtoHistory("http://www.betman.co.kr/gameSchedule.so?method=basic&gameId=G101&gameRound=150005");
 			logger.info(String.format("[JUNIZA-MONITOR] 수집 스케줄러 끝"));
 			logger.info(String.format("[JUNIZA-MONITOR] ##########################################################################################"));
 		} catch (IOException e) {
