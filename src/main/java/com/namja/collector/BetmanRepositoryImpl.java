@@ -60,12 +60,49 @@ public class BetmanRepositoryImpl implements BetmanRepository {
 		}
 	}
 
+	/**
+	 * 프로토 승부식에 대해서 가져온다.
+	 * @param url 수집 대상 페이지 url
+	 * @URL http://www.betman.co.kr/gameInfoMain.so?gameId=G101&gameRound=150005
+	 * @gameId=G101&gameRound=150005 바뀔수 있다.
+	 * @throws IOException 
+	 * @throws ClientProtocolException 
+	 */
 	@Override
-	public RecentMatchHistory getRecentMatchHistory2(String url)
-			throws ClientProtocolException, IOException {
-		// TODO Auto-generated method stub
-		System.out.println("");
-		return null;
+	public RecentMatchHistory getRecentMatchProtoHistory(String url) throws ClientProtocolException, IOException {
+		
+		logger.info(String.format("SCHEDULE::START-GET_RECENT_MATCH_HISTORY::TARGET -> %s", url));
+		
+		try {
+		
+			CloseableHttpClient httpclient = HttpClients.createDefault();
+			ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+	
+	            public String handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
+	            	
+	                int status = response.getStatusLine().getStatusCode();
+	                if (status >= 200 && status < 300) {
+	                    HttpEntity entity = response.getEntity();
+	                    return entity != null ? EntityUtils.toString(entity) : null;
+	                } else {
+	                    throw new ClientProtocolException("Unexpected response status: " + status);
+	                }
+	            }
+	
+	        };
+	        
+	        String responseBody = httpclient.execute(new HttpGet(url), responseHandler);
+	        Document doc = Jsoup.parse(responseBody);
+	        Element recentMatchHistoryElement = doc.getElementsByClass("dataH02").first().getElementsByTag("tbody").first();
+	        
+	        // 2사이즈 배열 [ 0 : 팀명 / 1 : 순위 ]
+	        String[] firstTeamNameRankInfo = recentMatchHistoryElement.getElementsByTag("tr").first().getElementsByTag("td").get(2).text().split(" ");
+	        
+	        return null;
+		
+		} finally {
+			logger.info(String.format("SCHEDULE::END-GET_RECENT_MATCH_HISTORY::TARGET -> %s", url));
+		}
 	}
 	
 }

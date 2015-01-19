@@ -12,4 +12,9 @@ public interface SportsMetaDataCollectorService {
 	 */
 	public void recentMatchHistory();
 	
+	/**
+	 * 프로토 승부식 수집 스케줄러
+	 */
+	public void recentMatchProtoHistory();
+	
 }
